@@ -15,6 +15,8 @@
 
 """Training and evaluation"""
 
+import sys 
+sys.path.append('/home/taira/.local/lib/python3.10/site-packages')
 import run_lib
 from absl import app
 from absl import flags

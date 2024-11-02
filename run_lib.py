@@ -21,9 +21,10 @@ import io
 import os
 import time
 
+import torch
+torch.cuda.current_device()
 import numpy as np
 import tensorflow as tf
-import tensorflow_gan as tfgan
 import logging
 # Keep the import below for registering all model definitions
 from models import ddpm, ncsnv2, ncsnpp
@@ -32,11 +33,9 @@ import sampling
 from models import utils as mutils
 from models.ema import ExponentialMovingAverage
 import datasets
-import evaluation
 import likelihood
 import sde_lib
 from absl import flags
-import torch
 from torch.utils import tensorboard
 from torchvision.utils import make_grid, save_image
 from utils import save_checkpoint, restore_checkpoint
@@ -255,8 +254,9 @@ def evaluate(config,
     sampling_fn = sampling.get_sampling_fn(config, sde, sampling_shape, inverse_scaler, sampling_eps)
 
   # Use inceptionV3 for images with resolution higher than 256.
-  inceptionv3 = config.data.image_size >= 256
-  inception_model = evaluation.get_inception_model(inceptionv3=inceptionv3)
+  #inceptionv3 = config.data.image_size >= 256
+  
+  #inception_model = evaluation.get_inception_model(inceptionv3=inceptionv3)
 
   begin_ckpt = config.eval.begin_ckpt
   logging.info("begin checkpoint: %d" % (begin_ckpt,))
@@ -348,6 +348,7 @@ def evaluate(config,
           fout.write(io_buffer.getvalue())
 
         # Force garbage collection before calling TensorFlow code for Inception network
+        '''
         gc.collect()
         latents = evaluation.run_inception_distributed(samples, inception_model,
                                                        inceptionv3=inceptionv3)
@@ -360,9 +361,10 @@ def evaluate(config,
           np.savez_compressed(
             io_buffer, pool_3=latents["pool_3"], logits=latents["logits"])
           fout.write(io_buffer.getvalue())
-
+'''
       # Compute inception scores, FIDs and KIDs.
       # Load all statistics that have been previously computed and saved for each host
+      '''
       all_logits = []
       all_pools = []
       this_sample_dir = os.path.join(eval_dir, f"ckpt_{ckpt}")
@@ -406,3 +408,4 @@ def evaluate(config,
         io_buffer = io.BytesIO()
         np.savez_compressed(io_buffer, IS=inception_score, fid=fid, kid=kid)
         f.write(io_buffer.getvalue())
+    '''

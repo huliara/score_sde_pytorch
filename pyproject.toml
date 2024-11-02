@@ -1,0 +1,27 @@
+[project]
+name = "score-sde-pytorch"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "hule2343", email = "aaa402262@gmail.com" }
+]
+dependencies = [
+    "numpy>=2.1.2",
+    "ml-collections==0.1.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/score_sde_pytorch"]

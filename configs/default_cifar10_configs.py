@@ -1,12 +1,16 @@
 import ml_collections
 import torch
+import sampling as sp
+import sde_lib as sde
+import losses as l
 
-
-def get_default_configs():
+def get_config():
   config = ml_collections.ConfigDict()
   # training
   config.training = training = ml_collections.ConfigDict()
   config.training.batch_size = 128
+  config.training.sde='vpsde'
+  
   training.n_iters = 1300001
   training.snapshot_freq = 50000
   training.log_freq = 50
@@ -25,6 +29,9 @@ def get_default_configs():
   sampling.noise_removal = True
   sampling.probability_flow = False
   sampling.snr = 0.16
+  sampling.method='pc'
+  sampling.predictor='euler_maruyama'
+  sampling.corrector='langevin'
 
   # evaluation
   config.eval = evaluate = ml_collections.ConfigDict()
@@ -48,6 +55,17 @@ def get_default_configs():
 
   # model
   config.model = model = ml_collections.ConfigDict()
+  model.name = 'ddpm'
+  model.nonlinearity='relu'
+  model.nf=32
+  model.ch_mult = (1, 2, 2, 2)
+  model.num_res_blocks = 2
+  model.attn_resolutions = (4,16)
+  model.resamp_with_conv = False
+  model.conditional = True
+  model.scale_by_sigma = True
+  model.ema_rate = 0.9999
+  
   model.sigma_min = 0.01
   model.sigma_max = 50
   model.num_scales = 1000
