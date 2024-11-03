@@ -21,6 +21,7 @@ from configs.default_cifar10_configs import get_default_configs
 
 def get_config():
   config = get_default_configs()
+  config.device = 'cuda'
   # training
   training = config.training
   training.sde = 'vpsde'

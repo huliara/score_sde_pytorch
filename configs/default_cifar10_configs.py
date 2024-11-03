@@ -1,17 +1,12 @@
 import ml_collections
-import torch
-import sampling as sp
-import sde_lib as sde
-import losses as l
 
-def get_config():
+
+def get_default_configs():
   config = ml_collections.ConfigDict()
   # training
   config.training = training = ml_collections.ConfigDict()
-  config.training.batch_size = 128
-  config.training.sde='vpsde'
-  
-  training.n_iters = 1300001
+  config.training.batch_size = 64
+  training.n_iters = 13001
   training.snapshot_freq = 50000
   training.log_freq = 50
   training.eval_freq = 100
@@ -21,6 +16,7 @@ def get_config():
   training.snapshot_sampling = True
   training.likelihood_weighting = False
   training.continuous = True
+  training.n_jitted_steps = 5
   training.reduce_mean = False
 
   # sampling
@@ -29,9 +25,6 @@ def get_config():
   sampling.noise_removal = True
   sampling.probability_flow = False
   sampling.snr = 0.16
-  sampling.method='pc'
-  sampling.predictor='euler_maruyama'
-  sampling.corrector='langevin'
 
   # evaluation
   config.eval = evaluate = ml_collections.ConfigDict()
@@ -55,17 +48,6 @@ def get_config():
 
   # model
   config.model = model = ml_collections.ConfigDict()
-  model.name = 'ddpm'
-  model.nonlinearity='relu'
-  model.nf=32
-  model.ch_mult = (1, 2, 2, 2)
-  model.num_res_blocks = 2
-  model.attn_resolutions = (4,16)
-  model.resamp_with_conv = False
-  model.conditional = True
-  model.scale_by_sigma = True
-  model.ema_rate = 0.9999
-  
   model.sigma_min = 0.01
   model.sigma_max = 50
   model.num_scales = 1000
@@ -85,6 +67,5 @@ def get_config():
   optim.grad_clip = 1.
 
   config.seed = 42
-  config.device = torch.device('cuda:0') if torch.cuda.is_available() else torch.device('cpu')
 
   return config
